@@ -1,10 +1,7 @@
 ---
-
-```markdown
 # 🧩 Task Tracker SRE
 
 A production-ready task tracker web app with built-in Prometheus metrics, Dockerized for deployment on AWS EC2 using Terraform. Ideal for showcasing DevOps and SRE skills with real infrastructure automation.
-
 ---
 
 ## 🚀 Features
@@ -21,7 +18,6 @@ A production-ready task tracker web app with built-in Prometheus metrics, Docker
 ## 📁 Project Structure
 
 ```
-
 task-tracker-sre/
 ├── Dockerfile
 ├── index.js
@@ -32,7 +28,7 @@ task-tracker-sre/
 │   ├── variables.tf
 │   └── outputs.tf
 
-````
+```
 
 ---
 
@@ -69,7 +65,7 @@ docker build -t task-tracker-sre .
 docker run -p 3000:3000 task-tracker-sre
 
 # Access: http://localhost:3000
-````
+```
 
 ---
 
