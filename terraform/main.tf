@@ -11,12 +11,22 @@ resource "aws_instance" "app_server" {
 
   user_data = <<-EOF
               #!/bin/bash
-              apt update -y
-              apt install docker.io git -y
-              git clone https://github.com/danish2114/task-tracker-sre.git /opt/app
-              cd /opt/app
-              docker build -t local-task-tracker .
-              docker run -d -p 3000:3000 local-task-tracker
+              sudo yum update -y
+              sudo amazon-linux-extras install docker -y
+              sudo service docker start
+              sudo usermod -a -G docker ec2-user
+
+              # Git clone  repo
+              cd /home/ec2-user
+              git clone https://github.com/Dani7867/task-tracker-sre.git
+              cd task-tracker-sre
+
+              # Build Docker image locally
+              sudo docker build -t task-tracker-sre .
+
+              # Run container
+              sudo docker run -d -p 3000:3000 task-tracker-sre
+
               EOF
 
   tags = {
