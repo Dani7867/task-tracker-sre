@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "app_server" {
-  ami                         = "ami-0c02fb55956c7d316" # Ubuntu 22.04 (Free Tier)
+  ami                         = "ami-0c02fb55956c7d316" # Ubuntu 22.04
   instance_type               = "t2.micro"
   key_name                    = var.key_name
   associate_public_ip_address = true
