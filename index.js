@@ -55,6 +55,11 @@ app.get('/cpu', (req, res) => {
   res.send('CPU spike simulated');
 });
 
+app.get('/about', (req, res) => {
+  res.send('This is a task tracker API built by Danish.');
+});
+
+
 // Prometheus metrics
 app.get('/metrics', async (req, res) => {
   res.set('Content-Type', promClient.register.contentType);
