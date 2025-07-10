@@ -1,0 +1,42 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to main branch
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            # Go to project directory or clone
+            cd ~/task-tracker-sre || git clone https://github.com/Dani7867/task-tracker-sre.git ~/task-tracker-sre && cd ~/task-tracker-sre
+          
+            # Pull latest code
+            git pull origin main
+          
+            # Stop & remove existing container (if running)
+            docker stop task-tracker || true
+            docker rm task-tracker || true
+          
+            # Build Docker image
+            docker build -t task-tracker-sre .
+          
+            # Run the container
+            docker run -d --name task-tracker -p 3000:3000 task-tracker-sre
+          EOF
