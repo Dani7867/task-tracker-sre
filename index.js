@@ -2,6 +2,8 @@ const express = require('express');
 const promClient = require('prom-client');
 const app = express();
 app.use(express.json());
+const cors = require('cors');
+app.use(cors());
 const port = process.env.PORT || 3000;
 
 // In-memory task list
