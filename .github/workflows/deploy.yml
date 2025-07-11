@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main  # Trigger on push to main branch
+      - main  # Trigger deployment on push to main branch
 
 jobs:
   deploy:
@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up SSH
+      - name: Set up SSH Access
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
@@ -24,15 +24,26 @@ jobs:
       - name: Deploy via SSH
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            # Go to project directory or clone if not exists
-            cd ~/task-tracker-sre || git clone https://github.com/Dani7867/task-tracker-sre.git ~/task-tracker-sre && cd ~/task-tracker-sre
+            set -e  # Exit on any error
+
+            # Clone repo if not present
+            if [ ! -d "~/task-tracker-sre" ]; then
+              git clone https://github.com/Dani7867/task-tracker-sre.git ~/task-tracker-sre
+            fi
+
+            cd ~/task-tracker-sre
 
             # Pull latest code
             git pull origin main
 
-            # Stop and remove running containers
+            # Stop existing containers and free port 3000 (if needed)
+            sudo fuser -k 3000/tcp || true
+
             docker compose down || true
 
-            # Build and start containers in detached mode
+            docker ps -q | xargs -r docker stop || true
+            docker ps -aq | xargs -r docker rm || true
+
+            # Build and run containers
             docker compose up -d --build
           EOF
