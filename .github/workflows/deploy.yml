@@ -26,11 +26,6 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             set -e  # Exit on any error
 
-            # Clone only if the directory does not exist
-            if [ ! -d "~/task-tracker-sre/.git" ]; then
-              git clone https://github.com/Dani7867/task-tracker-sre.git ~/task-tracker-sre
-            fi
-
             cd ~/task-tracker-sre
 
             # Pull latest code
