@@ -1,0 +1,13 @@
+version: '3'
+services:
+  backend:
+    build: ./backend
+    container_name: task-tracker-backend
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build: ./frontend
+    container_name: task-tracker-frontend
+    ports:
+      - "80:80"

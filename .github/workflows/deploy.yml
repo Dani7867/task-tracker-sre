@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    name: Build and Deploy
+    name: Build and Deploy Monorepo (Backend + Frontend)
     runs-on: ubuntu-latest
 
     steps:
@@ -21,22 +21,18 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy to EC2
+      - name: Deploy via SSH
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            # Go to project directory or clone
+            # Go to project directory or clone if not exists
             cd ~/task-tracker-sre || git clone https://github.com/Dani7867/task-tracker-sre.git ~/task-tracker-sre && cd ~/task-tracker-sre
-          
+
             # Pull latest code
             git pull origin main
-          
-            # Stop & remove existing container (if running)
-            docker stop task-tracker || true
-            docker rm task-tracker || true
-          
-            # Build Docker image
-            docker build -t task-tracker-sre .
-          
-            # Run the container
-            docker run -d --name task-tracker -p 3000:3000 task-tracker-sre
+
+            # Stop and remove running containers
+            docker compose down || true
+
+            # Build and start containers in detached mode
+            docker compose up -d --build
           EOF
