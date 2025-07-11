@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { fetchTasks, createTask, deleteTask } from '../api';
+import {
+    Container,
+    Typography,
+    TextField,
+    Button,
+    List,
+    ListItem,
+    ListItemText,
+    IconButton,
+    Box
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface Task {
     id: number;
@@ -27,22 +39,41 @@ const TaskList: React.FC = () => {
     };
 
     return (
-        <div style={{ maxWidth: 500, margin: 'auto', textAlign: 'center' }}>
-            <h2>📋 Task Tracker</h2>
-            <input
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                placeholder="New task"
-            />
-            <button onClick={handleAdd}>Add</button>
-            <ul>
-                {tasks.map(t => (
-                    <li key={t.id}>
-                        {t.title} <button onClick={() => handleDelete(t.id)}>❌</button>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <Container maxWidth="sm">
+            <Box mt={5} textAlign="center">
+                <Typography variant="h4" gutterBottom>
+                    📋 Task Tracker
+                </Typography>
+
+                <Box display="flex" gap={2} justifyContent="center" mt={2}>
+                    <TextField
+                        variant="outlined"
+                        label="New Task"
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                        fullWidth
+                    />
+                    <Button variant="contained" color="primary" onClick={handleAdd}>
+                        Add
+                    </Button>
+                </Box>
+
+                <List sx={{ mt: 4 }}>
+                    {tasks.map(task => (
+                        <ListItem
+                            key={task.id}
+                            secondaryAction={
+                                <IconButton edge="end" color="error" onClick={() => handleDelete(task.id)}>
+                                    <DeleteIcon />
+                                </IconButton>
+                            }
+                        >
+                            <ListItemText primary={task.title} />
+                        </ListItem>
+                    ))}
+                </List>
+            </Box>
+        </Container>
     );
 };
 
