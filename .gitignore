@@ -4,3 +4,10 @@ node_modules/
 terraform.tfstate*
 .env
 .DS_Store
+# Frontend build
+frontend/build/
+# Terraform
+*.tfstate
+*.tfstate.backup
+.idea
+
